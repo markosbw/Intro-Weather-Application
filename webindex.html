@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <!-- The beginning setup -->
+<head>
+    <meta name="viewport" content="width=device-width, intitial-scale=1.0">
+    <title>Weather Application </title>
+    <link rel="stylesheet" href="style.css">
+
+
+</head>    
+<body>
+        <!-- The setup of the application makes the full user application work in a rectangular card -->
+
+    <div class="card">
+            <!-- Search box with the button -->
+
+        <div class="search">
+            <input type="text" placeholder="Enter city name" spellcheck="false">
+                <button><img src="images/icons8-search-100.png"></button>
+
+
+        </div>
+
+        <div class="error"> <p>Invalid City Name</p></div>
+            <!-- Actual weather now displayed -->
+        <div class ="weath">
+            <img src="images/icons8-rain-100.png" class="weather-icon">
+            <h1 class ="temp">22°f</h1>
+            <h2 class ="city">New York</h2>
+            <div class="details">
+                <div class="col">     <!-- This combines the two divs into one layer -->
+                    <img src="images/icons8-wet-100.png">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="images/icons8-wind-100.png">
+                    <div>
+                        <p class="wind">10 mp/h</p>
+                        <p>Wind Speed</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+<script>
+
+// The weather APIkey and its url
+const apiKey = "a9b39871a417820c781ad7fe8ab79f23";
+const apiUrl = "https://api.openweathermap.org/data/2.5/weather?&units=imperial&q=";
+
+// Connects the html's buttons to script/code
+const searchBox = document.querySelector(".search input");
+const searchBtn = document.querySelector(".search button");
+
+const weatherIcon = document.querySelector(".weather-icon");
+
+// Weather function, parameter is user input city.
+async function checkWeather(city) {
+    const response = await fetch(apiUrl+ city + `&appid=${apiKey}`); //apikey must be at end, since the url ends with q, which is for city input
+
+    if(response.status == 404) {
+        document.querySelector(".error").style.display = "block";
+        document.querySelector(".weath").style.display = "none";
+    } else {
+        document.querySelector(".weath").style.display = "block";
+        document.querySelector(".error").style.display = "none";
+    }
+
+    var data = await response.json();
+
+    // Presents all data's (object) values
+    document.querySelector(".city").innerHTML = data.name;
+    document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°f";
+    document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+    document.querySelector(".wind").innerHTML = data.wind.speed + "mp/h";
+
+    if(data.weather[0].main == "Clouds") {
+        weatherIcon.src = "images/icons8-cloud-100.png";
+    } else if(data.weather[0].main == "Clear") {
+        weatherIcon.src = "images/icons8-sun-100.png";
+    } else if(data.weather[0].main == "Rain") {
+        weatherIcon.src = "images/icons8-rain-100.png";
+    } else if(data.weather[0].main == "Drizzle") {
+        weatherIcon.src = "images/icons8-rain-100.png";
+    } else if(data.weather[0].main == "Snow") {
+        weatherIcon.src = "images/icons8-snow-100.png";
+    }
+
+    document.querySelector(".weath").style.display = "block";
+    
+}
+
+
+// Enables click to run checkweather and inserts city name(value)
+searchBtn.addEventListener("click", ()=> {
+    checkWeather(searchBox.value);
+})
+
+
+</script>
+
+
+</body>
+
+</html>
